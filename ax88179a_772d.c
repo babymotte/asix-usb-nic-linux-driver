@@ -16,9 +16,9 @@
  ******************************************************************************/
 #include "ax_main.h"
 #include "ax88179a_772d.h"
-#ifdef ENABLE_PTP_FUNC
+// #ifdef ENABLE_PTP_FUNC
 #include "ax_ptp.h"
-#endif
+// #endif
 
 struct _ax_buikin_setting AX88179A_BULKIN_SIZE[] = {
 	{5, 0x7B, 0x00,	0x18, 0x0F},	//1G, SS
@@ -29,7 +29,7 @@ struct _ax_buikin_setting AX88179A_BULKIN_SIZE[] = {
 	{7, 0xC0, 0x04,	0x06, 0x0F},	//100M, Half, HS
 	{7, 0x00, 0,	0x03, 0x3F},	//FS
 };
-#ifdef ENABLE_AX88279
+// #ifdef ENABLE_AX88279
 struct _ax_buikin_setting AX88279_BULKIN_SIZE[] = {
 	{5, 0x10, 0x01,	0x11, 0x0F},	//2.5G
 	{7, 0xB3, 0x01,	0x11, 0x0F},	//1G, SS
@@ -40,7 +40,7 @@ struct _ax_buikin_setting AX88279_BULKIN_SIZE[] = {
 	{7, 0x80, 0x01,	0x03, 0x0F},	//100M, Half, HS
 	{7, 0x00, 0,	0x03, 0x3F},	//FS
 };
-#endif
+// #endif
 
 static int ax88179a_set_phy_power(struct ax_device *axdev, bool on);
 
@@ -267,9 +267,9 @@ static int ax88179a_set_coalesce(struct net_device *netdev,
 	return ret;
 }
 
-#ifdef ENABLE_PTP_FUNC
+// #ifdef ENABLE_PTP_FUNC
 static int ax88179a_set_wol_get_ts_info
-(struct net_device *dev, struct ethtool_ts_info *info)
+(struct net_device *dev, struct kernel_ethtool_ts_info *info)
 {
 	struct ax_device *axdev = (struct ax_device *)netdev_priv(dev);
 	struct ax_ptp_cfg *ptp_cfg = axdev->ptp_cfg;
@@ -306,7 +306,7 @@ static int ax88179a_set_wol_get_ts_info
 
 	return 0;
 }
-#endif
+// #endif
 
 const struct ethtool_ops ax88179a_ethtool_ops = {
 #if KERNEL_VERSION(5, 7, 0) < LINUX_VERSION_CODE
@@ -338,14 +338,14 @@ const struct ethtool_ops ax88179a_ethtool_ops = {
 	.set_pauseparam = ax_set_pauseparam,
 	.get_regs_len	= ax_get_regs_len,
 	.get_regs	= ax_get_regs,
-#ifdef ENABLE_PTP_FUNC
+// #ifdef ENABLE_PTP_FUNC
 	.get_ts_info	= ax88179a_set_wol_get_ts_info,
-#else
-	.get_ts_info	= ethtool_op_get_ts_info,
-#endif
+// #else
+// 	.get_ts_info	= ethtool_op_get_ts_info,
+// #endif
 };
 
-#ifdef ENABLE_AX88279
+// #ifdef ENABLE_AX88279
 const struct ethtool_ops ax88279_ethtool_ops = {
 #if KERNEL_VERSION(5, 7, 0) < LINUX_VERSION_CODE
 	.supported_coalesce_params = ETHTOOL_COALESCE_RX_USECS,
@@ -372,13 +372,13 @@ const struct ethtool_ops ax88279_ethtool_ops = {
 	.set_pauseparam = ax_set_pauseparam,
 	.get_regs_len	= ax_get_regs_len,
 	.get_regs	= ax_get_regs,
-#ifdef ENABLE_PTP_FUNC
+// #ifdef ENABLE_PTP_FUNC
 	.get_ts_info	= ax88179a_set_wol_get_ts_info,
-#else
-	.get_ts_info	= ethtool_op_get_ts_info,
-#endif
+// #else
+// 	.get_ts_info	= ethtool_op_get_ts_info,
+// #endif
 };
-#endif
+// #endif
 
 void ax88179a_get_fw_version(struct ax_device *axdev)
 {
@@ -670,7 +670,7 @@ int ax88179a_sw_reset(struct ax_device *axdev, struct _ax_ioctl_command *info)
 		return -ENOMEM;
 
 	*((u32 *)buf) = 1;
-#ifdef ENABLE_AX88279	
+// #ifdef ENABLE_AX88279	
 	if (axdev->chip_version == AX_VERSION_AX88279) {
 		*((u8 *)buf) = 0x41;
 		ax_write_cmd(axdev, 0x2A, 0xAA00, 0, 1, buf);
@@ -679,11 +679,11 @@ int ax88179a_sw_reset(struct ax_device *axdev, struct _ax_ioctl_command *info)
 			USB_DIR_OUT | USB_TYPE_VENDOR | USB_RECIP_DEVICE,
 			0x18E8, 0x000F, buf, 4, 10);
 	}
-#else
-	usb_control_msg(axdev->udev, usb_sndctrlpipe(axdev->udev, 0), 0x10,
-		USB_DIR_OUT | USB_TYPE_VENDOR | USB_RECIP_DEVICE,
-		0x18E8, 0x000F, buf, 4, 10);
-#endif
+// #else
+// 	usb_control_msg(axdev->udev, usb_sndctrlpipe(axdev->udev, 0), 0x10,
+// 		USB_DIR_OUT | USB_TYPE_VENDOR | USB_RECIP_DEVICE,
+// 		0x18E8, 0x000F, buf, 4, 10);
+// #endif
 	kfree(buf);
 
 	return 0;
@@ -867,7 +867,7 @@ IOCTRL_TABLE ax88179a_tbl[] = {
 	ax88179a_erase_sector_flash,
 };
 
-#ifdef ENABLE_PTP_FUNC
+// #ifdef ENABLE_PTP_FUNC
 static int ax88179a_hwtstamp_ioctl
 (struct net_device *dev, struct ifreq *ifr, int cmd)
 {
@@ -904,7 +904,7 @@ static int ax88179a_hwtstamp_ioctl
 	return copy_to_user(ifr->ifr_data, &config, sizeof(config)) ?
 		-EFAULT : 0;
 }
-#endif
+// #endif
 
 #if KERNEL_VERSION(5, 15, 0) <= LINUX_VERSION_CODE
 int ax88179a_siocdevprivate(struct net_device *netdev, struct ifreq *rq,
@@ -946,10 +946,10 @@ int ax88179a_ioctl(struct net_device *netdev, struct ifreq *rq, int cmd)
 	struct ax_device *axdev = netdev_priv(netdev);
 
 	switch (cmd) {
-#ifdef ENABLE_PTP_FUNC
+// #ifdef ENABLE_PTP_FUNC
 	case SIOCSHWTSTAMP:
 		return ax88179a_hwtstamp_ioctl(netdev, rq, cmd);
-#endif
+// #endif
 	}
 	return generic_mii_ioctl(&axdev->mii, if_mii(rq), cmd, NULL);
 }
@@ -982,10 +982,10 @@ int ax88179a_ioctl(struct net_device *netdev, struct ifreq *rq, int cmd)
 		}
 
 		break;
-#ifdef ENABLE_PTP_FUNC
+// #ifdef ENABLE_PTP_FUNC
 	case SIOCSHWTSTAMP:
 		return ax88179a_hwtstamp_ioctl(netdev, rq, cmd);
-#endif
+// #endif
 	default:
 		return generic_mii_ioctl(&axdev->mii, if_mii(rq), cmd, NULL);
 	}
@@ -1040,23 +1040,23 @@ static int ax88179a_bind(struct ax_device *axdev)
 	int ret;
 
 	ax88179a_get_fw_version(axdev);
-#ifdef ENABLE_AX88279
+// #ifdef ENABLE_AX88279
 	if (axdev->chip_version == AX_VERSION_AX88279)
 		PRINT_VERSION(axdev, AX_DRIVER_STRING_279);
 	else
 		PRINT_VERSION(axdev, AX_DRIVER_STRING_179A_772D);
-#else
-	PRINT_VERSION(axdev, AX_DRIVER_STRING_179A_772D);
-#endif
+// #else
+// 	PRINT_VERSION(axdev, AX_DRIVER_STRING_179A_772D);
+// #endif
 
 #ifdef ENABLE_QUEUE_PRIORITY
 	wvalue |= AX_USB_EP5_EN;
 #endif
-#ifdef ENABLE_AX88279
-#ifdef ENABLE_PTP_FUNC
+// #ifdef ENABLE_AX88279
+// #ifdef ENABLE_PTP_FUNC
 	wvalue |= AX_USB_EP4_EN;
-#endif
-#endif
+// #endif
+// #endif
 	ret = ax_write_cmd(axdev, AX_FW_MODE, AX_FW_MODE_179A, wvalue, 0, NULL);
 	if (ret < 0)
 		return ret;
@@ -1110,24 +1110,24 @@ static int ax88179a_bind(struct ax_device *axdev)
 	axdev->bin_setting.custom = false;
 	axdev->tx_align_len = 8;
 	axdev->coalesce = 0;
-#ifdef ENABLE_AX88279
+// #ifdef ENABLE_AX88279
 	if (axdev->chip_version == AX_VERSION_AX88279) {
 		netdev->ethtool_ops = &ax88279_ethtool_ops;
 	} else {
 		netdev->ethtool_ops = &ax88179a_ethtool_ops;
 	}
-#else
-	netdev->ethtool_ops = &ax88179a_ethtool_ops;
-#endif
+// #else
+// 	netdev->ethtool_ops = &ax88179a_ethtool_ops;
+// #endif
 	
 	axdev->netdev->netdev_ops = &ax88179a_netdev_ops;
 
-#ifdef ENABLE_PTP_FUNC
+// #ifdef ENABLE_PTP_FUNC
 	ret = ax_ptp_register(axdev);
 	if (ret < 0)
 		netdev_warn(netdev,
 			    "Failed to register PHC device. (%d)\n", ret);
-#endif
+// #endif
 
 #ifdef ENABLE_AUTOSUSPEND
 	axdev->autosuspend_is_supported = true;
@@ -1142,9 +1142,9 @@ static int ax88179a_bind(struct ax_device *axdev)
 
 static void ax88179a_unbind(struct ax_device *axdev)
 {
-#ifdef ENABLE_PTP_FUNC
+// #ifdef ENABLE_PTP_FUNC
 	ax_ptp_unregister(axdev);
-#endif
+// #endif
 }
 
 static int ax88179a_stop(struct ax_device *axdev)
@@ -1153,11 +1153,11 @@ static int ax88179a_stop(struct ax_device *axdev)
 
 	reg16 = AX_RX_CTL_STOP;
 	ax_write_cmd(axdev, AX_ACCESS_MAC, AX_MEDIUM_STATUS_MODE, 2, 2, &reg16);
-#ifdef ENABLE_AX88279
-#ifdef ENABLE_PTP_FUNC
+// #ifdef ENABLE_AX88279
+// #ifdef ENABLE_PTP_FUNC
 	ax88279_stop_get_ts(axdev);
-#endif
-#endif
+// #endif
+// #endif
 
 	ax88179a_set_phy_power(axdev, false);
 
@@ -1181,10 +1181,10 @@ void ax88179a_set_multicast(struct net_device *netdev)
 
 	axdev->rxctl = (AX_RX_CTL_START | AX_RX_CTL_AB 
 				   | ((axdev->ipalign) ? (AX_RX_CTL_IPE) : 0));
-#ifdef ENABLE_AX88279
+// #ifdef ENABLE_AX88279
 	if (axdev->chip_version == AX_VERSION_AX88279)
 		axdev->rxctl |= AX_RX_CTL_DROPCRCERR;
-#endif
+// #endif
 
 	if (netdev->flags & IFF_PROMISC) {
 		axdev->rxctl |= AX_RX_CTL_PRO;
@@ -1232,7 +1232,7 @@ static int ax88179a_hw_init(struct ax_device *axdev)
 	u8 reg8;
 	int ret;
 
-#ifdef ENABLE_AX88279
+// #ifdef ENABLE_AX88279
 	if (axdev->chip_version != AX_VERSION_AX88279) {
 		u32 reg32 = 0;
 		ret = ax_read_cmd(axdev, AX88179A_PBUS_REG,0x18C8, 0, 4,
@@ -1242,13 +1242,13 @@ static int ax88179a_hw_init(struct ax_device *axdev)
 		axdev->chip_pin = reg32 & 0x03;
 		axdev->ipalign = 0;
 	}
-#endif
+// #endif
 	ret = ax88179a_set_phy_power(axdev, true);
 	if (ret < 0)
 		return ret;
 	msleep(250);
 
-#ifdef ENABLE_AX88279
+// #ifdef ENABLE_AX88279
 	if (axdev->chip_version == AX_VERSION_AX88279) {
 		reg16 = ax_mdio_read(axdev->netdev, axdev->mii.phy_id,
 				     MII_ADVERTISE);
@@ -1259,7 +1259,7 @@ static int ax88179a_hw_init(struct ax_device *axdev)
 			      (BMCR_ANRESTART | BMCR_ANENABLE));
 		axdev->ipalign = 1;
 	}
-#endif
+// #endif
 	ret = ax88179a_autodetach(axdev);
 	if (ret < 0)
 		return ret;
@@ -1404,11 +1404,11 @@ static int ax88179a_hw_init(struct ax_device *axdev)
 
 	ax_set_tx_qlen(axdev);
 
-#ifdef ENABLE_AX88279
-#ifdef ENABLE_PTP_FUNC
+// #ifdef ENABLE_AX88279
+// #ifdef ENABLE_PTP_FUNC
 	ax88279_start_get_ts(axdev);
-#endif
-#endif
+// #endif
+// #endif
 
 	return ret;
 }
@@ -1703,14 +1703,14 @@ static int ax88179a_link_reset(struct ax_device *axdev)
 	ax88179a_eee_setting(axdev, axdev->eee_enabled);
 #endif
 
-#ifdef ENABLE_PTP_FUNC
+// #ifdef ENABLE_PTP_FUNC
 	if (axdev->driver_info->ptp_init)
 		axdev->driver_info->ptp_init(axdev);
-#endif
+// #endif
 
 	return 0;
 }
-#ifdef ENABLE_AX88279
+// #ifdef ENABLE_AX88279
 static int ax88279_get_ether_link(struct ax_device *axdev)
 {
 	ax88179a_get_ether_link(axdev);
@@ -2138,14 +2138,14 @@ static int ax88279_link_reset(struct ax_device *axdev)
 		return ret;
 #endif
 
-#ifdef ENABLE_PTP_FUNC
+// #ifdef ENABLE_PTP_FUNC
 	if (axdev->driver_info->ptp_init)
 		axdev->driver_info->ptp_init(axdev);
-#endif
+// #endif
 
 	return 0;
 }
-#endif
+// #endif
 inline void ax88179a_rx_checksum(struct sk_buff *skb, void *pkt_hdr)
 {
 	struct _179a_rx_pkt_header *hdr = (struct _179a_rx_pkt_header *)pkt_hdr;
@@ -2241,12 +2241,12 @@ static void ax88179a_rx_fixup(struct ax_device *axdev, struct rx_desc *desc,
 			__vlan_hwaccel_put_tag(skb, pkt_hdr->vlan_tag & VLAN_VID_MASK);
 		}
 #endif
-#ifdef ENABLE_PTP_FUNC
+// #ifdef ENABLE_PTP_FUNC
 		if (pkt_hdr->PTP_ind) {
 			ax_rx_get_timestamp(skb, (u64 *)pkt_hdr);
 			pkt_hdr += 2;
 		}
-#endif
+// #endif
 		skb->protocol = eth_type_trans(skb, netdev);
 		if (*work_done < budget) {
 #ifdef ENABLE_RX_TASKLET
@@ -2338,16 +2338,16 @@ static int ax88179a_tx_fixup(struct ax_device *axdev, struct tx_desc *desc)
 					 axdev->tx_align_len);
 		desc->skb_len += skb->len;
 		desc->skb_num += skb_shinfo(skb)->gso_segs ?: 1;
-#ifdef ENABLE_PTP_FUNC
+// #ifdef ENABLE_PTP_FUNC
 		if (skb_shinfo(skb)->tx_flags & SKBTX_HW_TSTAMP) {
 			skb_queue_tail(&axdev->tx_timestamp, skb);
 			set_bit(AX_TX_TIMESTAMPS, &desc->flags);
 		} else {
 			dev_kfree_skb_any(skb);
 		}
-#else
-		dev_kfree_skb_any(skb);
-#endif
+// #else
+// 		dev_kfree_skb_any(skb);
+// #endif
 
 		if (tx_hdr->max_seg_size)
 			break;
@@ -2394,11 +2394,11 @@ static int ax88179a_tx_fixup(struct ax_device *axdev, struct tx_desc *desc)
 
 static int ax88179a_system_suspend(struct ax_device *axdev)
 {
-#ifdef ENABLE_AX88279
-#ifdef ENABLE_PTP_FUNC
+// #ifdef ENABLE_AX88279
+// #ifdef ENABLE_PTP_FUNC
 	ax88279_stop_get_ts(axdev);
-#endif
-#endif
+// #endif
+// #endif
 
 	return 0;
 }
@@ -2424,11 +2424,11 @@ static int ax88179a_runtime_suspend(struct ax_device *axdev)
 	u16 reg16, medium_mode;
 	u8 reg8, loop = 100;
 
-#ifdef ENABLE_AX88279
-#ifdef ENABLE_PTP_FUNC
+// #ifdef ENABLE_AX88279
+// #ifdef ENABLE_PTP_FUNC
 	ax88279_stop_get_ts(axdev);
-#endif
-#endif
+// #endif
+// #endif
 	while(loop--) {
 		ax_read_cmd_nopm(axdev, AX_ACCESS_MAC, 0x57, 2, 2, &reg16, 0);
 		if (reg16 >= 0x11FF)
@@ -2553,7 +2553,7 @@ static int ax88179a_runtime_resume(struct ax_device *axdev)
 	return 0;
 }
 
-#ifdef ENABLE_AX88279
+// #ifdef ENABLE_AX88279
 const struct driver_info ax88279_info = {
 	.bind		= ax88179a_bind,
 	.unbind		= ax88179a_unbind,
@@ -2570,15 +2570,15 @@ const struct driver_info ax88279_info = {
 	.system_resume	= ax88179a_system_resume,
 	.runtime_suspend = ax88179a_runtime_suspend,
 	.runtime_resume	= ax88179a_runtime_resume,
-#ifdef ENABLE_PTP_FUNC
+// #ifdef ENABLE_PTP_FUNC
 	.ptp_pps_ctrl = ax88279_ptp_pps_ctrl,
 	.ptp_init	= ax88279_ptp_init,
 	.ptp_remove	= ax88279_ptp_remove,
-#endif
+// #endif
 	.napi_weight	= AX88279_NAPI_WEIGHT,
 	.buf_rx_size	= AX88279_BUF_RX_SIZE,
 };
-#endif
+// #endif
 const struct driver_info ax88179a_info = {
 	.bind		= ax88179a_bind,
 	.unbind		= ax88179a_unbind,
@@ -2595,11 +2595,11 @@ const struct driver_info ax88179a_info = {
 	.system_resume	= ax88179a_system_resume,
 	.runtime_suspend = ax88179a_runtime_suspend,
 	.runtime_resume	= ax88179a_runtime_resume,
-#ifdef ENABLE_PTP_FUNC
+// #ifdef ENABLE_PTP_FUNC
 	.ptp_pps_ctrl = ax88179a_ptp_pps_ctrl,
 	.ptp_init	= ax88179a_ptp_init,
 	.ptp_remove	= ax88179a_ptp_remove,
-#endif
+// #endif
 	.napi_weight	= AX88179A_NAPI_WEIGHT,
 	.buf_rx_size	= AX88179A_BUF_RX_SIZE,
 };
@@ -2620,11 +2620,11 @@ const struct driver_info ax88772d_info = {
 	.system_resume	= ax88179a_system_resume,
 	.runtime_suspend = ax88179a_runtime_suspend,
 	.runtime_resume	= ax88179a_runtime_resume,
-#ifdef ENABLE_PTP_FUNC
+// #ifdef ENABLE_PTP_FUNC
 	.ptp_pps_ctrl = ax88179a_ptp_pps_ctrl,
 	.ptp_init	= ax88179a_ptp_init,
 	.ptp_remove	= ax88179a_ptp_remove,
-#endif
+// #endif
 	.napi_weight	= AX88179A_NAPI_WEIGHT,
 	.buf_rx_size	= AX88179A_BUF_RX_SIZE,
 };

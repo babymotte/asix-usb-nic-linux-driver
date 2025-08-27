@@ -82,7 +82,7 @@
 	#define AX_PTP_MEM_SEG_MASK		0x01
 	#define AX_PTP_MEM_SEG_0		0
 
-#ifdef ENABLE_AX88279
+// #ifdef ENABLE_AX88279
 #define AX_PTP_REG_BASE_ADDR_HI		0x0012
 #define AX_PTP_TX_MEM_SETTING		0x0000
 	#define AX_PTP_PTP_CPU_EN		0x0001
@@ -157,7 +157,7 @@
 	AX_TXC0_PARSER_SNAP_EN | AX_TXC0_PARSER_UDP_EN | \
 	AX_TXC0_PARSER_UDPV6_EN | AX_TXC0_PARSER_UDP_PTP_EN | \
 	AX_TXC0_PARSER_UDPV6_PTP_EN | AX_TXC0_PARSER_EVENT_PORT_EN)
-#endif
+// #endif
 
 
 struct _ptp_header {
@@ -215,14 +215,14 @@ struct ax_ptp_cfg {
 	struct _ax_ptp_info tx_ptp_info[AX_PTP_QUEUE_SIZE];
 	unsigned long ptp_head, ptp_tail, num_items;
 	int get_timestamp_retry;
-#ifdef ENABLE_AX88279
+// #ifdef ENABLE_AX88279
 #define AX_PTP_EP4_SIZE	((2 * AX_PTP_INFO_SIZE * AX_PTP_HW_QUEUE_SIZE) + 1)
 #define AX_TS_SEG_1		1
 #define AX_EP4_INFO_SIZE (AX_PTP_QUEUE_SIZE * AX_PTP_EP4_SIZE)
 	struct urb *urb;
 	unsigned char ep4_buf[AX_PTP_EP4_SIZE];
 	struct _ax_ptp_info ep4_ptp_info[AX_EP4_INFO_SIZE];
-#endif
+// #endif
 };
 
 int ax_ptp_register(struct ax_device *axdev);
@@ -230,13 +230,13 @@ void ax_ptp_unregister(struct ax_device *axdev);
 int ax88179a_ptp_pps_ctrl(struct ax_device *axdev, u8 enable);
 int ax88179a_ptp_init(struct ax_device *axdev);
 void ax88179a_ptp_remove(struct ax_device *axdev);
-#ifdef ENABLE_AX88279
+// #ifdef ENABLE_AX88279
 int ax88279_ptp_pps_ctrl(struct ax_device *axdev, u8 enable);
 int ax88279_ptp_init(struct ax_device *axdev);
 void ax88279_ptp_remove(struct ax_device *axdev);
 int ax88279_start_get_ts(struct ax_device *axdev);
 void ax88279_stop_get_ts(struct ax_device *axdev);
-#endif
+// #endif
 int ax_ptp_ts_read_cmd_async(struct ax_device *axdev);
 void ax_rx_get_timestamp(struct sk_buff *skb, u64 *pkt_hdr);
 #endif /* End of __ASIX_PTP_H */

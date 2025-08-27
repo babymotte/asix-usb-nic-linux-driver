@@ -14,12 +14,12 @@
  * You should have received a copy of the GNU General Public License along with
  * this program. If not, see <https://www.gnu.org/licenses/>.
  ******************************************************************************/
-#include "ax_main.h"
+#include "./ax_main.h"
 #include "ax88179_178a.h"
 #include "ax88179a_772d.h"
-#ifdef ENABLE_PTP_FUNC
+// #ifdef ENABLE_PTP_FUNC
 #include "ax_ptp.h"
-#endif
+// #endif
 
 #ifdef ENABLE_AUTODETACH_FUNC
 static int autodetach = -1;
@@ -152,7 +152,7 @@ int ax_get_link_ksettings(struct net_device *netdev,
 
 	mii_ethtool_get_link_ksettings(&axdev->mii, cmd);
 
-#ifdef ENABLE_AX88279
+// #ifdef ENABLE_AX88279
 	//printk("============AX88279==========");
 	if (axdev->chip_version == AX_VERSION_AX88279) {
 #if KERNEL_VERSION(5, 0, 0) <= LINUX_VERSION_CODE
@@ -179,7 +179,7 @@ int ax_get_link_ksettings(struct net_device *netdev,
 		if (axdev->intr_link_info.eth_speed == ETHER_LINK_2500)
 			cmd->base.speed = SPEED_2500;
 	}
-#endif
+// #endif
 
 	mutex_unlock(&axdev->control);
 
@@ -265,16 +265,16 @@ int ax_set_wol(struct net_device *netdev, struct ethtool_wolinfo *wolinfo)
 	if (ret < 0)
 		return ret;
 
-#ifdef ENABLE_AX88279
+// #ifdef ENABLE_AX88279
 	ret = ax_set_s5_wol(axdev, reg8);
 	if (ret < 0)
 		return ret;
-#endif
+// #endif
 
 	return 0;
 }
 
-#ifdef ENABLE_AX88279
+// #ifdef ENABLE_AX88279
 int ax_set_s5_wol(struct ax_device *axdev, u8 enable) 
 {
 	int ret = 0;
@@ -287,7 +287,7 @@ int ax_set_s5_wol(struct ax_device *axdev, u8 enable)
 	
 	return ret;
 }
-#endif
+// #endif
 
 static const char ax_gstrings[][ETH_GSTRING_LEN] = {
 	"tx_packets",
@@ -911,10 +911,10 @@ void ax_write_bulk_callback(struct urb *urb)
 	if (!axdev)
 		return;
 
-#ifdef ENABLE_PTP_FUNC
+// #ifdef ENABLE_PTP_FUNC
 	if (test_and_clear_bit(AX_TX_TIMESTAMPS, &desc->flags))
 		ax_ptp_ts_read_cmd_async(axdev);
-#endif
+// #endif
 	netdev = axdev->netdev;
 	stats = ax_get_stats(netdev);
 
@@ -1523,10 +1523,10 @@ static u16 ax_select_queue(struct net_device *netdev, struct sk_buff *skb,
 	struct ax_link_info *link_info = &axdev->link_info;
 
 	if (skb_shinfo(skb)->tx_flags & SKBTX_HW_TSTAMP) {
-#ifdef ENABLE_AX88279
+// #ifdef ENABLE_AX88279
 		if (axdev->chip_version >= AX_VERSION_AX88279)
 			return 1;
-#endif
+// #endif
 		if (link_info->eth_speed == ETHER_LINK_1000)
 			return 1;
 	}
@@ -1687,9 +1687,9 @@ static void ax_set_carrier(struct ax_device *axdev)
 
 	if (axdev->link) {
 		if (!netif_carrier_ok(netdev)) {
-#ifdef ENABLE_PTP_FUNC
+// #ifdef ENABLE_PTP_FUNC
 			axdev->driver_info->ptp_pps_ctrl(axdev, 1);
-#endif
+// #endif
 			if (axdev->driver_info->link_reset(axdev))
 				return;
 			netif_stop_queue(netdev);
@@ -1713,10 +1713,10 @@ static void ax_set_carrier(struct ax_device *axdev)
 	} else {
 		if (netif_carrier_ok(netdev)) {
 			netif_carrier_off(netdev);
-#ifdef ENABLE_PTP_FUNC
+// #ifdef ENABLE_PTP_FUNC
 			axdev->driver_info->ptp_pps_ctrl(axdev, 0);
-#endif
-#ifdef ENABLE_AX88279
+// #endif
+// #ifdef ENABLE_AX88279
 			if (axdev->chip_version == AX_VERSION_AX88279) {
 				u8 reg8 = 0;
 				ax_write_cmd_nopm(axdev, AX_ACCESS_MAC,
@@ -1724,7 +1724,7 @@ static void ax_set_carrier(struct ax_device *axdev)
 				ax_write_cmd_nopm(axdev, AX_ACCESS_MAC,
 							AX_MEDIUM_STATUS_MODE, 1, 1, &reg8);
 			}
-#endif			
+// #endif			
 #ifdef ENABLE_TX_TASKLET
 			tasklet_disable(&axdev->tx_tl);
 #endif
@@ -1744,12 +1744,12 @@ static void ax_set_carrier(struct ax_device *axdev)
 #endif
 		}
 	}
-#ifdef ENABLE_AX88279
+// #ifdef ENABLE_AX88279
 	if (axdev->intr_link_info.eth_speed == ETHER_LINK_2500) {
 		netdev_info(axdev->netdev,
 			    "link up, 2500Mbps, full-duplex\n");
 	}
-#endif
+// #endif
 }
 
 static inline void __ax_work_func(struct ax_device *axdev)
@@ -2573,10 +2573,10 @@ static const struct usb_device_id ax_usb_table[] = {
 			AX_BCDDEVICE_ID_772D, ax88179a_info),
 	ASIX_USB_DEVICE(USB_VENDOR_ID_ASIX, AX_DEVICE_ID_179X, 0,
 			AX_BCDDEVICE_ID_179A, ax88179a_info),
-#ifdef ENABLE_AX88279
+// #ifdef ENABLE_AX88279
 	ASIX_USB_DEVICE(USB_VENDOR_ID_ASIX, AX_DEVICE_ID_179X, 0,
 			AX_BCDDEVICE_ID_279, ax88279_info),
-#endif
+// #endif
 	{/*END*/}
 };
 

@@ -63,22 +63,22 @@ typedef int (*usb_write_function)(struct ax_device *axdev, u8 cmd, u16 value,
 #define AX_BCDDEVICE_ID_178A	0x0100
 #define AX_DEVICE_ID_772D	AX_DEVICE_ID_179X
 #define AX_BCDDEVICE_ID_772D	0x0300
-#ifdef ENABLE_AX88279
+// #ifdef ENABLE_AX88279
 #define AX_BCDDEVICE_ID_279	0x0400
-#endif
+// #endif
 
 #define AX_DRIVER_STRING_179_178A \
 				"ASIX AX88179_178A USB Ethernet Controller"
 #define AX_DRIVER_STRING_179A_772D \
 				"ASIX AX88179B_179A_772E_772D USB Ethernet Controller"
-#ifdef ENABLE_AX88279
+// #ifdef ENABLE_AX88279
 #define AX_DRIVER_STRING_279 \
 				"ASIX AX88279 USB Ethernet Controller"
-#endif
+// #endif
 
 #define DRIVER_VERSION		"3.5.0"
 #define DRIVER_AUTHOR		"ASIX"
-#define DRIVER_DESC		"ASIX USB Ethernet Controller"
+#define DRIVER_DESC		"ASIX USB Ethernet Controller with PTP"
 #define MODULENAME		"ax_usb_nic"
 
 #define PRINT_VERSION(axdev, str) \
@@ -123,11 +123,11 @@ typedef int (*usb_write_function)(struct ax_device *axdev, u8 cmd, u16 value,
 #define AX_FW_MODE			0x08
 	#define AX_FW_MODE_179A			0x0001
 	#define AX_USB_EP5_EN			0x0001
-#ifdef ENABLE_AX88279
-#ifdef ENABLE_PTP_FUNC
+// #ifdef ENABLE_AX88279
+// #ifdef ENABLE_PTP_FUNC
 	#define AX_USB_EP4_EN			0x0002
-#endif
-#endif
+// #endif
+// #endif
 #define AX_WRITE_EFUSE_EN		0x09
 #define AX_WRITE_EFUSE_DIS		0x0A
 #define AX_ACCESS_MFAB			0x10
@@ -368,9 +368,9 @@ enum ax_chip_version {
 	AX_VERSION_INVALID		= 0,
 	AX_VERSION_AX88179		= 4,
 	AX_VERSION_AX88179A_772D	= 6,
-#ifdef ENABLE_AX88279
+// #ifdef ENABLE_AX88279
 	AX_VERSION_AX88279		= 7,
-#endif
+// #endif
 };
 
 struct ax_device;
@@ -489,10 +489,10 @@ struct ax_device {
 	u8 int_link_info;
 	u8 int_link_chg;
 
-#ifdef ENABLE_PTP_FUNC
+// #ifdef ENABLE_PTP_FUNC
 	struct ax_ptp_cfg *ptp_cfg;
 	struct sk_buff_head tx_timestamp;
-#endif
+// #endif
 	u64 bulkin_complete;
 	u64 bulkin_error;
 	u64 bulkout_complete;
@@ -531,11 +531,11 @@ struct driver_info {
 	int	(*runtime_suspend)(struct ax_device *axdev);
 	int	(*runtime_resume)(struct ax_device *axdev);
 
-#ifdef ENABLE_PTP_FUNC
+// #ifdef ENABLE_PTP_FUNC
 	int (*ptp_pps_ctrl)(struct ax_device *axdev, u8 enable);
 	int	(*ptp_init)(struct ax_device *axdev);
 	void	(*ptp_remove)(struct ax_device *axdev);
-#endif
+// #endif
 
 	unsigned long napi_weight;
 	size_t	buf_rx_size;

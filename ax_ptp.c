@@ -20,7 +20,7 @@
 
 #define ptp_to_dev(ptp) container_of(ptp, struct ax_ptp_cfg, ptp_caps)
 
-#ifdef ENABLE_AX88279
+// #ifdef ENABLE_AX88279
 static void ax_reset_ptp_queue(struct ax_device *axdev)
 {
 	struct ax_ptp_cfg *ptp_cfg = axdev->ptp_cfg;
@@ -35,7 +35,7 @@ static void ax_reset_ptp_queue(struct ax_device *axdev)
 
 	memset(ptp_cfg->tx_ptp_info, 0, AX_PTP_INFO_SIZE * AX_PTP_QUEUE_SIZE);
 }
-#endif
+// #endif
 
 static int ax88179a_ptp_adjtime(struct ptp_clock_info *ptp, s64 delta)
 {
@@ -196,9 +196,9 @@ int ax88179a_ptp_init(struct ax_device *axdev)
 	u32 reg32;
 	u32 timeout = 0;
 	int ret;
-#ifdef ENABLE_PTP_FUNC
+// #ifdef ENABLE_PTP_FUNC
 	axdev->driver_info->ptp_pps_ctrl(axdev, 1);
-#endif
+// #endif
 	if (axdev->sub_version < 3)
 		return 0;
 
@@ -325,7 +325,7 @@ int ax88179a_ptp_pps_ctrl(struct ax_device *axdev, u8 enable)
 	return 0;
 }
 
-#ifdef ENABLE_AX88279
+// #ifdef ENABLE_AX88279
 int ax88279_ptp_pps_ctrl(struct ax_device *axdev, u8 enable)
 {
 	u32 reg32 = 0;
@@ -344,14 +344,14 @@ int ax88279_ptp_pps_ctrl(struct ax_device *axdev, u8 enable)
 
 	return 0;
 }
-#endif
+// #endif
 
 void ax88179a_ptp_remove(struct ax_device *axdev)
 {
 	u8 reg8;
-#ifdef ENABLE_PTP_FUNC
+// #ifdef ENABLE_PTP_FUNC
 	axdev->driver_info->ptp_pps_ctrl(axdev, 0);
-#endif
+// #endif
 	if (axdev->sub_version < 3)
 		return;
 
@@ -659,7 +659,7 @@ void ax_rx_get_timestamp(struct sk_buff *skb, u64 *pkt_hdr)
 	shhwtstamps->hwtstamp = ns_to_ktime(time64);
 }
 
-#ifdef ENABLE_AX88279
+// #ifdef ENABLE_AX88279
 static int ax_ptp_pbus_write(struct ax_device *axdev, u16 offset, u16 len,
 			     void *data)
 {
@@ -859,9 +859,9 @@ int ax88279_ptp_init(struct ax_device *axdev)
 
 	ax_reset_ptp_queue(axdev);
 
-#ifdef ENABLE_PTP_FUNC
+// #ifdef ENABLE_PTP_FUNC
 	axdev->driver_info->ptp_pps_ctrl(axdev, 1);
-#endif
+// #endif
 
 	reg32 = (AX_PTP_MEM_SEG_SIZE_279_5 << 24) |
 		(AX_PTP_MEM_START_ADDR << 8) | AX_PTP_PTP_CPU_EN;
@@ -994,9 +994,9 @@ int ax88279_ptp_init(struct ax_device *axdev)
 void ax88279_ptp_remove(struct ax_device *axdev)
 {
 	u32 reg32 = 0;
-#ifdef ENABLE_PTP_FUNC
+// #ifdef ENABLE_PTP_FUNC
 	axdev->driver_info->ptp_pps_ctrl(axdev, 0);
-#endif
+// #endif
 	ax_ptp_pbus_write(axdev, AX_PTP_LCK_CTRL0, 4, &reg32);
 	ax_ptp_pbus_write(axdev, AX_PTP_RX_CTRL0, 4, &reg32);
 	ax_ptp_pbus_write(axdev, AX_PTP_TX_CTRL0, 4, &reg32);
@@ -1117,7 +1117,7 @@ void ax88279_stop_get_ts(struct ax_device *axdev)
 	if (ptp_cfg->urb)
 		usb_kill_urb(ptp_cfg->urb);
 }
-#endif
+// #endif
 
 int ax_ptp_register(struct ax_device *axdev)
 {
@@ -1130,7 +1130,7 @@ int ax_ptp_register(struct ax_device *axdev)
 	axdev->ptp_cfg = ptp_cfg;
 
 	switch (axdev->chip_version) {
-#ifdef ENABLE_AX88279
+// #ifdef ENABLE_AX88279
 	case AX_VERSION_AX88279:
 		ptp_cfg->urb = usb_alloc_urb(0, GFP_KERNEL);
 		if (!ptp_cfg->urb)
@@ -1138,7 +1138,7 @@ int ax_ptp_register(struct ax_device *axdev)
 
 		ptp_cfg->ptp_caps = ax88279_ptp_clock;
 		break;
-#endif
+// #endif
 	case AX_VERSION_AX88179A_772D:
 		if (axdev->sub_version < 3)
 			return 0;
@@ -1163,10 +1163,10 @@ int ax_ptp_register(struct ax_device *axdev)
 
 	return 0;
 fail:
-#ifdef ENABLE_AX88279
+// #ifdef ENABLE_AX88279
 	if (ptp_cfg->urb)
 		usb_free_urb(axdev->intr_urb);
-#endif
+// #endif
 	kfree(axdev->ptp_cfg);
 
 	return ret;

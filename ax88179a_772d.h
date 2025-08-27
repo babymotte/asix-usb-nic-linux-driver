@@ -20,20 +20,20 @@
 #define AX88179A_BIN_TIMER_UINT		800		//ns
 
 #define AX88179A_NAPI_WEIGHT		64
-#ifdef ENABLE_AX88279
+// #ifdef ENABLE_AX88279
 #define AX88279_NAPI_WEIGHT		256
-#endif
+// #endif
 #define AX88179A_BUF_RX_SIZE		(48 * 1024)
-#ifdef ENABLE_AX88279
+// #ifdef ENABLE_AX88279
 #define AX88279_BUF_RX_SIZE		(48 * 1024)
-#endif
+// #endif
 #define AX88179A_PHY_ID			0x03
 #define AX88179_GPHY_CTRL		0x0F
 	#define AX_GPHY_EEE_CTRL		0x01
 #define AX88179A_HIGH_QUEUE_POINT	0x60
-#ifdef ENABLE_AX88279
+// #ifdef ENABLE_AX88279
 #define AX88279_HIGH_QUEUE_POINT	0x70
-#endif
+// #endif
 #define AX88179A_AUTODETACH_DELAY	(5UL << 8)
 
 #define AX8179A_WAKEUP_SETTING	0x07
@@ -125,7 +125,7 @@
 #define PHY_10M_STS			0x16
 	#define LINK_10M_OK		0x40
 
-#ifdef ENABLE_AX88279
+// #ifdef ENABLE_AX88279
 #define AX_PBUS_A32			0x11
 
 #define AX_PBUS_REG_BASE_ADDR_HI	0x0013
@@ -145,7 +145,7 @@
 	#define AX_AES_CLK_SELECT_DIVIDE	0x080000
 	#define AX_XGMAC_TX_CLK_EN		0x100000
 	#define AX_XGMAC_RX_CLK_EN		0x200000
-#endif
+// #endif
 
 struct _179a_rx_pkt_header {
 #ifdef __BIG_ENDIAN
@@ -234,9 +234,9 @@ struct _179a_tx_pkt_header {
 					((tx_hdr->length >> 16) & 0x1F)) & 0x7F)
 
 extern const struct net_device_ops ax88179a_netdev_ops;
-#ifdef ENABLE_AX88279
+// #ifdef ENABLE_AX88279
 extern const struct driver_info ax88279_info;
-#endif
+// #endif
 extern const struct driver_info ax88179a_info;
 extern const struct driver_info ax88772d_info;
 #if KERNEL_VERSION(5, 15, 0) <= LINUX_VERSION_CODE
