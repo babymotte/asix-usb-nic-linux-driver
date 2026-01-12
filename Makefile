@@ -2,7 +2,7 @@ TARGET	= ax_usb_nic
 KDIR	:= /lib/modules/$(shell uname -r)/build
 PWD	= $(shell pwd)
 
-ENABLE_IOCTL_DEBUG = y
+ENABLE_IOCTL_DEBUG = n
 ENABLE_AUTODETACH_FUNC = n
 ENABLE_MAC_PASS = n
 ENABLE_INT_AGGRESSIVE = y
